@@ -35,9 +35,10 @@ if(!$ajax):
 <main>
 <?php endif; ?>
 
-<a href="http://localhost/ajaxloader/?page=<?= (isset($_GET['page']) ? $_GET['page'] + 1 : 1); ?>">go</a>
-<h2>Page <?= $_GET['page']; ?></h2>
-<img src="http://lorempixel.com/1920/1080/" />
+<div>
+<h2>Page <?= $_GET['page']; ?></h2>	
+<a href="http://localhost/ajaxloader/?page=<?= (isset($_GET['page']) ? $_GET['page'] + 1 : 1); ?>"><img src="http://lorempixel.com/1920/1080/" /></a>
+</div>
 
 <?php if(!$ajax): ?>
 </main>
@@ -46,7 +47,6 @@ if(!$ajax):
 	(function() {
 		'use strict';
 
-		console.log(window.location.href);
 		var ajaxOptions = {
 			    wrapper: 'body',
 			    container: 'main',
@@ -57,7 +57,6 @@ if(!$ajax):
 			    },
 			    afterLoading: (url, container) => {
 					setTimeout(() => {
-			    		console.log('navigated');
 			        	container.classList.remove('loading');						
 					}, 500);
 			    },
@@ -66,23 +65,19 @@ if(!$ajax):
 			    }
 			},
 			loadOptions = {
+				wrapper: 'body',
 			    container: 'main',
 			    replaceContent: false,
 			    ajaxUrl: 'http://localhost/ajaxloader/',
 			    ajaxData: {
-			        action: 'your_action',
-			        offset: 10,
-			        category: 'category'
+			        page: 1
 			    },
 
 			    beforeLoading: (url, container) => {
 			        container.classList.add('loading');
 			    },
 			    afterLoading: (url, container, data) => {
-			    	console.log('after get');
 					setTimeout(() => {
-			        	container.innerHTML += data ;
-
 			        	container.classList.remove('loading');						
 					}, 500);
 			    },

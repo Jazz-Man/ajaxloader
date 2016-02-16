@@ -63,35 +63,53 @@
         }
     }
 
+    function load(url, settings) {
+        let container = document.querySelector(settings.container);
+
+        callback(settings.beforeLoading, url, container);
+
+        request(url, settings).then(response => {
+            console.log('let them have settings');
+            console.log(settings);
+            if(settings.replaceContent) {
+                container.innerHTML = response;
+                console.log('replace');
+                setListeners(settings);
+            } else {
+                container.innerHTML += response;
+                console.log('append');
+                setListeners(mergeObjects(defaults, settings.options));
+            }
+
+            callback(settings.afterLoading, url, container, response);
+        }).catch(error => {
+            callback(settings.error, error);
+        });        
+    }
+
     function setListeners(settings) {
+        console.log('settings' + settings);
         let wrapper = document.querySelector(settings.wrapper),
             anchors = [].slice.call(wrapper.querySelectorAll(settings.anchors)),
-            listenClick = anchor => {
+            listenClick = (anchor, settings) => {
                 anchor.addEventListener('click', (e) => {
                     let url = anchor.getAttribute('href');
 
-                    console.log('setting thangs');
-                    anchor.classList.add('ajax');
-
-                    if (url === window.location.href) {
-                        return false;
-                    } else if (e.which === 2 || e.metaKey) {
+                    if (e.which === 2 || e.metaKey) {
                         return true;
-                    } else {
+                    }
+                    else if (url !== window.location.href) {
                         window.history.pushState(null, settings.siteName, url);
                         load(url, settings);
                     }
-
                     e.preventDefault();
                 });
             };
 
-            console.log(anchors);
-
         if(anchors.length > 1) {
-            anchors.forEach(anchor => listenClick(anchor));
+            anchors.forEach(anchor => listenClick(anchor, settings));
         } else {
-            listenClick(anchors[0]);
+            listenClick(anchors[0], settings);
         }
 
         window.onload = () => {
@@ -105,30 +123,9 @@
                 onLoad = blockPopstateEvent && document.readyState === 'complete';
 
             if (!onLoad && url.search('#') === -1) {
-                callback(settings.beforeLoading, url, container);
                 load(url, settings);
             }
         };
-    }   
-
-    function load(url, settings) {
-        let container = document.querySelector(settings.container);
-
-        callback(settings.beforeLoading, url, container);
-
-        request(url, settings).then(response => {
-            if(settings.replaceContent) {
-                container.innerHTML = response;
-                setListeners(settings);
-            } else {
-                console.log('test');
-                setListeners(settings.options);
-            }
-
-            callback(settings.afterLoading, url, container, response);
-        }).catch(error => {
-            callback(settings.error, error);
-        });        
     }
 
     document.ajaxLoader = (options) => {
@@ -136,15 +133,10 @@
             url = settings.ajaxUrl ? serialize(settings.ajaxUrl, settings.ajaxData) : false,
             historySupport = window.history && window.history.pushState;
 
-        console.log(settings);
-
         if (url) {
-            console.log('url available');
             load(url, settings);
             return;
         }
-
-        console.log('set listeners');
 
         if (historySupport) {
             setListeners(settings);
