@@ -40,7 +40,6 @@
                 xhr.open('GET', url, true);
                 xhr.setRequestHeader('X-Requested-With', 'BAWXMLHttpRequest');
                 xhr.onload = () => {
-                    setListeners(settings);
                     resolve(xhr.responseText);
                     busy = null;
                 };
@@ -64,21 +63,6 @@
         }
     }
 
-    function load(url, settings) {
-        let container = document.querySelector(settings.container);
-
-        callback(settings.beforeLoading, url, container);
-
-        request(url, settings).then(response => {
-            if(settings.replaceContent) {
-                container.innerHTML = response;
-            }   
-            callback(settings.afterLoading, url, container, response);
-        }).catch(error => {
-            callback(settings.error, error);
-        });        
-    }
-
     function setListeners(settings) {
         let wrapper = document.querySelector(settings.wrapper),
             anchors = [].slice.call(wrapper.querySelectorAll(settings.anchors)),
@@ -86,8 +70,11 @@
                 anchor.addEventListener('click', (e) => {
                     let url = anchor.getAttribute('href');
 
+                    console.log('setting thangs');
+                    anchor.classList.add('ajax');
+
                     if (url === window.location.href) {
-                        e.preventDefault();
+                        return false;
                     } else if (e.which === 2 || e.metaKey) {
                         return true;
                     } else {
@@ -98,6 +85,8 @@
                     e.preventDefault();
                 });
             };
+
+            console.log(anchors);
 
         if(anchors.length > 1) {
             anchors.forEach(anchor => listenClick(anchor));
@@ -120,15 +109,44 @@
                 load(url, settings);
             }
         };
+    }   
+
+    function load(url, settings) {
+        let container = document.querySelector(settings.container);
+
+        callback(settings.beforeLoading, url, container);
+
+        request(url, settings).then(response => {
+            if(settings.replaceContent) {
+                container.innerHTML = response;
+                setListeners(settings);
+            } else {
+                console.log('test');
+                setListeners(settings.options);
+            }
+
+            callback(settings.afterLoading, url, container, response);
+        }).catch(error => {
+            callback(settings.error, error);
+        });        
     }
 
     document.ajaxLoader = (options) => {
         let settings = mergeObjects(defaults, options),
-            url = settings.ajaxUrl ? serialize(settings.ajaxUrl, settings.ajaxData) : false;
+            url = settings.ajaxUrl ? serialize(settings.ajaxUrl, settings.ajaxData) : false,
+            historySupport = window.history && window.history.pushState;
+
+        console.log(settings);
 
         if (url) {
+            console.log('url available');
             load(url, settings);
-        } else if (window.history && window.history.pushState) {
+            return;
+        }
+
+        console.log('set listeners');
+
+        if (historySupport) {
             setListeners(settings);
         } else {
             console.error('History is not supported by this browser.');

@@ -1,37 +1,51 @@
-# imgpreloader
-Lightweight Javascript plugin for watching image loading (ES6 Version)
+# ajaxpageloader
+Asynchronous page loading using Javascript History API
 ## Install
-`bower i imgwatcher --save`
-## Loading backgrounds
-``` html
-<div data-background-src="http://placehold.it/350x150"></div>
-```
+`bower i ajaxpageloader --save`
+
 ## Init
+### Page loading
+Fetches new content and replaces current one.
 ``` js
-document.imgWatcher({
-  selector: '.preload',
-
-  progress: function(img, percentage) {
-    /*
-    	img.element -> the current image element
-    	img.src -> the current image url
-    	img.loaded -> image status (boolean)
-    */
-  },
-
-  //Processing done
-  always: function(images) {
-  	//images -> array of img objects
-  },
-    
-  //All images loaded successfully
-  done: function(images) {
-
-  }
+document.ajaxLoader({
+    wrapper: 'body', //the scope where to activate the script
+    anchors: 'a:not([target="_blank"]):not([href="#"])',
+    container: 'main', //where to load the new content
+    siteName: 'Your Site Name',
+    beforeLoading: function(url, container) {
+        //Scripts executed before the ajax request
+    },
+    afterLoading: function(url, container) {
+        //Scripts executed after the ajax request
+    }
 });
 ```
-## Loading background images
-Just add a data attribute to the element you want to apply the image to.
-``` html
-<div class="preload" data-background-src="image.jpg">
+### Content loading
+Fetches new content and appends to current one
+``` js
+document.ajaxLoader({
+    container: 'main', //where to load the new content
+    ajaxUrl: 'http://your-ajax-url.com',
+    ajaxData: { //All the data to send to the server
+        action: 'your_action',
+        offset: 10,
+        category: 'category'
+    },
+    
+    beforeLoading: function(url, container) {
+        //Scripts executed before the ajax request
+    },
+    afterLoading: function(url, container, data) {
+        //Scripts executed after the ajax request
+    }
+});
+```
+
+### Checking request with PHP (example)
+``` php
+function is_ajax_request() {
+    if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'BAWXMLHttpRequest' ){
+        return true;
+    }
+}
 ```
