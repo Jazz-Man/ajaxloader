@@ -15,7 +15,7 @@
 
     const serialize = (url, obj) => {
         let stringify = (obj) => {
-            return '?' + Object.keys(obj).map( (value, key) => encodeURIComponent(value) + '=' + encodeURIComponent(obj[value]) ).join('&');
+            return '?' + Object.keys(obj).map(value => encodeURIComponent(value) + '=' + encodeURIComponent(obj[value]) ).join('&');
         };
 
         return obj ? url + stringify(obj) : url;
@@ -40,17 +40,12 @@
                 xhr.open('GET', url, true);
                 xhr.setRequestHeader('X-Requested-With', 'BAWXMLHttpRequest');
                 xhr.onload = () => {
-
                     setListeners(settings);
-
                     resolve(xhr.responseText);
-
                     busy = null;
                 };
                 xhr.onerror = () => {
-                    
                     reject(Error('Error:' + xhr.status));
-
                 };
                 xhr.send();
             }
@@ -85,7 +80,6 @@
     }
 
     function setListeners(settings) {
-
         let wrapper = document.querySelector(settings.wrapper),
             anchors = [].slice.call(wrapper.querySelectorAll(settings.anchors)),
             listenClick = anchor => {
@@ -131,8 +125,6 @@
     document.ajaxLoader = (options) => {
         let settings = mergeObjects(defaults, options),
             url = settings.ajaxUrl ? serialize(settings.ajaxUrl, settings.ajaxData) : false;
-
-        console.log(url);
 
         if (url) {
             load(url, settings);

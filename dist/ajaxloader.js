@@ -16,7 +16,7 @@
 
     var serialize = function serialize(url, obj) {
         var stringify = function stringify(obj) {
-            return '?' + Object.keys(obj).map(function (value, key) {
+            return '?' + Object.keys(obj).map(function (value) {
                 return encodeURIComponent(value) + '=' + encodeURIComponent(obj[value]);
             }).join('&');
         };
@@ -43,15 +43,11 @@
                 xhr.open('GET', url, true);
                 xhr.setRequestHeader('X-Requested-With', 'BAWXMLHttpRequest');
                 xhr.onload = function () {
-
                     setListeners(settings);
-
                     resolve(xhr.responseText);
-
                     busy = null;
                 };
                 xhr.onerror = function () {
-
                     reject(Error('Error:' + xhr.status));
                 };
                 xhr.send();
@@ -87,7 +83,6 @@
     }
 
     function setListeners(settings) {
-
         var wrapper = document.querySelector(settings.wrapper),
             anchors = [].slice.call(wrapper.querySelectorAll(settings.anchors)),
             listenClick = function listenClick(anchor) {
@@ -135,8 +130,6 @@
     document.ajaxLoader = function (options) {
         var settings = mergeObjects(defaults, options),
             url = settings.ajaxUrl ? serialize(settings.ajaxUrl, settings.ajaxData) : false;
-
-        console.log(url);
 
         if (url) {
             load(url, settings);
