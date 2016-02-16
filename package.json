@@ -1,0 +1,39 @@
+{
+  "name": "imgwatcher",
+  "version": "1.0.0",
+  "description": "Javascript plugin for image loading",
+  "main": "js/ajaxloader.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kirpalmakanga/imgwatcher.git"
+  },
+  "keywords": [
+    "Javascript",
+    "image",
+    "loading",
+    "ES6"
+  ],
+  "author": "Kirpal Makanga <makanga.kirpal@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kirpalmakanga/imgwatcher/issues"
+  },
+  "homepage": "https://github.com/kirpalmakanga/imgwatcher#readme",
+  "devDependencies": {
+    "babel": "^6.5.2",
+    "babel-preset-es2015": "^6.5.0",
+    "browser-sync": "^2.11.1",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-eslint": "^2.0.0",
+    "gulp-livereload": "^3.8.1",
+    "gulp-load-plugins": "^1.2.0",
+    "gulp-size": "^2.0.0",
+    "gulp-watch": "^4.3.5",
+    "gulp-webserver": "^0.9.1",
+    "run-sequence": "^1.1.5"
+  }
+}

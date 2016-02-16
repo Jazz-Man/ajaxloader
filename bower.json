@@ -1,0 +1,26 @@
+{
+  "name": "imgpreloader",
+  "homepage": "https://github.com/kirpalmakanga/imgpreloader",
+  "authors": [
+    "Kirpal Makanga <makanga.kirpal@gmail.com"
+  ],
+  "description": "Lightweight Javascript plugin for watching image loading",
+  "main": "dist/ajaxloader.js",
+  "moduleType": [
+    "es6",
+    "globals"
+  ],
+  "keywords": [
+    "javascript",
+    "image",
+    "loading"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
