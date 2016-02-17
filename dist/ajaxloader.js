@@ -2,16 +2,28 @@
 'use strict';
 
 (function (document) {
-    var defaults = {
-        wrapper: 'html',
-        ajaxUrl: null,
-        ajaxData: null,
-        container: 'html',
-        anchors: 'a:not([target="_blank"]):not([href="#"])',
-        replaceContent: true,
-        beforeLoading: null,
-        afterLoading: null,
-        error: null
+    var createSettings = function createSettings(options) {
+        var defaults = {
+            wrapper: 'html',
+            ajaxUrl: null,
+            ajaxData: null,
+            container: 'html',
+            anchors: 'a:not([target="_blank"]):not([href="#"])',
+            replaceContent: true,
+            waitBeforeLoading: 0,
+            beforeLoading: null,
+            afterLoading: null,
+            error: null,
+            options: null
+        };
+
+        var settings = defaults;
+
+        for (var option in options) {
+            settings[option] = options[option];
+        }
+
+        return settings;
     };
 
     var serialize = function serialize(url, obj) {
@@ -24,16 +36,7 @@
         return obj ? url + stringify(obj) : url;
     };
 
-    var mergeObjects = function mergeObjects(defaults, options) {
-        var settings = defaults;
-
-        for (var option in options) {
-            settings[option] = options[option];
-        }
-        return settings;
-    };
-
-    var request = function request(url, settings) {
+    var query = function query(url, settings) {
         var xhr = new XMLHttpRequest();
 
         return new Promise(function (resolve, reject) {
@@ -58,40 +61,52 @@
 
     var blockPopstateEvent = document.readyState !== 'complete';
 
-    function callback(fn, param1, param2, param3) {
-        if (fn !== false && typeof fn === 'function') {
-            fn(param1, param2, param3);
-        } else {
-            console.error('The provided callback is not a function.');
-        }
+    function callback(fn, parameters) {
+        return new Promise(function (resolve, reject) {
+            if (fn !== null && typeof fn === 'function') {
+                fn(parameters);
+
+                resolve(query);
+            } else {
+                reject(Error('The provided callback is not a function.'));
+            }
+        });
     }
 
     function load(url, settings) {
         var container = document.querySelector(settings.container);
 
-        callback(settings.beforeLoading, url, container);
+        callback(settings.beforeLoading, {
+            url: url,
+            container: container
+        }).then(function (request) {
+            request(url, settings).then(function (response) {
+                setTimeout(function () {
+                    if (settings.replaceContent) {
+                        container.innerHTML = response;
+                        setListeners(settings);
+                    } else {
+                        container.innerHTML += response;
+                        setListeners(createSettings(settings.options));
+                    }
 
-        request(url, settings).then(function (response) {
-            console.log('let them have settings');
-            console.log(settings);
-            if (settings.replaceContent) {
-                container.innerHTML = response;
-                console.log('replace');
-                setListeners(settings);
-            } else {
-                container.innerHTML += response;
-                console.log('append');
-                setListeners(mergeObjects(defaults, settings.options));
-            }
-
-            callback(settings.afterLoading, url, container, response);
+                    callback(settings.afterLoading, {
+                        url: url,
+                        container: container,
+                        response: response
+                    }).catch(function (error) {
+                        return console.log(error);
+                    });
+                }, settings.waitBeforeLoading);
+            }).catch(function (error) {
+                callback(settings.error, error);
+            });
         }).catch(function (error) {
-            callback(settings.error, error);
+            return console.log(error);
         });
     }
 
     function setListeners(settings) {
-        console.log('settings' + settings);
         var wrapper = document.querySelector(settings.wrapper),
             anchors = [].slice.call(wrapper.querySelectorAll(settings.anchors)),
             listenClick = function listenClick(anchor, settings) {
@@ -133,16 +148,15 @@
     }
 
     document.ajaxLoader = function (options) {
-        var settings = mergeObjects(defaults, options),
-            url = settings.ajaxUrl ? serialize(settings.ajaxUrl, settings.ajaxData) : false,
-            historySupport = window.history && window.history.pushState;
+        var settings = createSettings(options),
+            url = settings.ajaxUrl ? serialize(settings.ajaxUrl, settings.ajaxData) : false;
 
         if (url) {
             load(url, settings);
             return;
         }
 
-        if (historySupport) {
+        if (window.history && window.history.pushState) {
             setListeners(settings);
         } else {
             console.error('History is not supported by this browser.');

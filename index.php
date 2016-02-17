@@ -19,10 +19,15 @@ if(!$ajax):
 			background-size: cover;
 			backface-visibility: hidden;
 		}
+
+		section {
+			width: 50%;
+		}
 		
 		main {
+			display: flex;
 			opacity: 1;
-			transition: opacity 0.5s ease-out;
+			transition: opacity 0.25s ease-out;
 		}
 		main.loading {
 			opacity: 0;
@@ -35,10 +40,10 @@ if(!$ajax):
 <main>
 <?php endif; ?>
 
-<div>
+<section>
 <h2>Page <?= $_GET['page']; ?></h2>	
 <a href="http://localhost/ajaxloader/?page=<?= (isset($_GET['page']) ? $_GET['page'] + 1 : 1); ?>"><img src="http://lorempixel.com/1920/1080/" /></a>
-</div>
+</section>
 
 <?php if(!$ajax): ?>
 </main>
@@ -52,13 +57,12 @@ if(!$ajax):
 			    container: 'main',
 			    anchors: 'a:not([target="_blank"]):not([href="#"])',
 			    siteName: 'Your Site Name',
-			    beforeLoading: (url, container) => {
-			        container.classList.add('loading');
+			    waitBeforeLoading: 250,
+			    beforeLoading: (data) => {
+			        data.container.classList.add('loading');
 			    },
-			    afterLoading: (url, container) => {
-					setTimeout(() => {
-			        	container.classList.remove('loading');						
-					}, 500);
+			    afterLoading: (data) => {
+			        data.container.classList.remove('loading');						
 			    },
 			    error: (error) => {
 			        console.log(error);
@@ -72,14 +76,10 @@ if(!$ajax):
 			    ajaxData: {
 			        page: 1
 			    },
-
-			    beforeLoading: (url, container) => {
-			        container.classList.add('loading');
+				waitBeforeLoading: 0,
+			    beforeLoading: (data) => {
 			    },
-			    afterLoading: (url, container, data) => {
-					setTimeout(() => {
-			        	container.classList.remove('loading');						
-					}, 500);
+			    afterLoading: (data) => {
 			    },
 			    options: ajaxOptions
 			},
