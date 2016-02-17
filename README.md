@@ -1,7 +1,7 @@
 # ajaxpageloader
 Asynchronous page loading using Javascript History API
 ## Install
-`bower i ajaxpageloader --save`
+`bower i ajaxloader --save`
 
 ## Init
 ### Page loading
@@ -12,6 +12,7 @@ document.ajaxLoader({
     anchors: 'a:not([target="_blank"]):not([href="#"])',
     container: 'main', //where to load the new content
     siteName: 'Your Site Name',
+    waitBeforeLoading: 250,
     beforeLoading: function(url, container) {
         //Scripts executed before the ajax request
     },
