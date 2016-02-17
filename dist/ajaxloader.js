@@ -62,15 +62,11 @@
     var blockPopstateEvent = document.readyState !== 'complete';
 
     function callback(fn, parameters) {
-        return new Promise(function (resolve, reject) {
-            if (fn !== null && typeof fn === 'function') {
-                fn(parameters);
-
-                resolve(query);
-            } else {
-                reject(Error('The provided callback is not a function.'));
-            }
-        });
+        if (fn !== null && typeof fn === 'function') {
+            fn(parameters);
+        } else {
+            console.error('The provided callback is not a function.');
+        }
     }
 
     function load(url, settings) {
@@ -79,30 +75,26 @@
         callback(settings.beforeLoading, {
             url: url,
             container: container
-        }).then(function (request) {
-            request(url, settings).then(function (response) {
-                setTimeout(function () {
-                    if (settings.replaceContent) {
-                        container.innerHTML = response;
-                        setListeners(settings);
-                    } else {
-                        container.innerHTML += response;
-                        setListeners(createSettings(settings.options));
-                    }
+        });
 
-                    callback(settings.afterLoading, {
-                        url: url,
-                        container: container,
-                        response: response
-                    }).catch(function (error) {
-                        return console.log(error);
-                    });
-                }, settings.waitBeforeLoading);
-            }).catch(function (error) {
-                callback(settings.error, error);
-            });
+        query(url, settings).then(function (response) {
+            setTimeout(function () {
+                if (settings.replaceContent) {
+                    container.innerHTML = response;
+                    setListeners(settings);
+                } else {
+                    container.innerHTML += response;
+                    setListeners(createSettings(settings.options));
+                }
+
+                callback(settings.afterLoading, {
+                    url: url,
+                    container: container,
+                    response: response
+                });
+            }, settings.waitBeforeLoading);
         }).catch(function (error) {
-            return console.log(error);
+            callback(settings.error, error);
         });
     }
 

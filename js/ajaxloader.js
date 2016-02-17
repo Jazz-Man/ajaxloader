@@ -59,15 +59,11 @@
     let blockPopstateEvent = document.readyState !== 'complete';
 
     function callback(fn, parameters) {
-        return new Promise ((resolve, reject) => {
-            if (fn !== null && typeof fn === 'function') {
-                fn(parameters);
-                
-                resolve(query);
-            } else {
-                reject(Error('The provided callback is not a function.'));
-            }            
-        });
+        if (fn !== null && typeof fn === 'function') {
+            fn(parameters);
+        } else {
+            console.error('The provided callback is not a function.');
+        }
     }
 
     function load(url, settings) {
@@ -76,27 +72,27 @@
         callback(settings.beforeLoading, {
             url: url,
             container:container
-        }).then(request => {
-            request(url, settings).then(response => {
-                setTimeout(() => {
-                    if(settings.replaceContent) {
-                        container.innerHTML = response;
-                        setListeners(settings);
-                    } else {
-                        container.innerHTML += response;
-                        setListeners(createSettings(settings.options));
-                    }
-                    
-                    callback(settings.afterLoading, {
-                        url: url,
-                        container:container,
-                        response: response
-                    }).catch(error => console.log(error));
-                }, settings.waitBeforeLoading);
-            }).catch(error => {
-                callback(settings.error, error);
-            });
-        }).catch(error => console.log(error));
+        });
+
+        query(url, settings).then(response => {
+            setTimeout(() => {
+                if(settings.replaceContent) {
+                    container.innerHTML = response;
+                    setListeners(settings);
+                } else {
+                    container.innerHTML += response;
+                    setListeners(createSettings(settings.options));
+                }
+
+                callback(settings.afterLoading, {
+                    url: url,
+                    container:container,
+                    response: response
+                });
+            }, settings.waitBeforeLoading);
+        }).catch(error => {
+            callback(settings.error, error);
+        });
     }
 
     function setListeners(settings) {
