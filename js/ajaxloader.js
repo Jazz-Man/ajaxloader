@@ -59,7 +59,9 @@
     let blockPopstateEvent = document.readyState !== 'complete';
 
     function callback(fn, parameters) {
-        if (fn !== null && typeof fn === 'function') {
+        if(fn === null) return;
+
+        if (typeof fn === 'function') {
             fn(parameters);
         } else {
             console.error('The provided callback is not a function.');
