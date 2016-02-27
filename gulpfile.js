@@ -36,7 +36,7 @@ gulp.task('build', ['lint', 'babel'], () => {
 gulp.task('watch', ['lint', 'babel'], () => {
   browserSync.init({
     files: ['js/*.js', '*.php'],
-    proxy: 'http://localhost/ajaxloader/',
+    proxy: 'http://127.0.0.1:5000/ajaxloader/',
   });
   gulp.watch(['js/*.js', '*.php'], ['build']);
 })

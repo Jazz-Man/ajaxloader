@@ -1,7 +1,10 @@
-/*eslint-env es6*/
 'use strict';
 
+/*jshint esversion: 6*/
+/*eslint-env es6*/
 (function (document) {
+    'use strict';
+
     var createSettings = function createSettings(options) {
         var defaults = {
             wrapper: 'html',
@@ -37,9 +40,8 @@
     };
 
     var query = function query(url, settings) {
-        var xhr = new XMLHttpRequest();
-
         return new Promise(function (resolve, reject) {
+            var xhr = new XMLHttpRequest();
             if (!busy) {
                 busy = true;
 
@@ -132,11 +134,10 @@
         };
 
         window.onpopstate = function (e) {
-            var url = window.location.href,
-                onLoad = blockPopstateEvent && document.readyState === 'complete';
+            var onLoad = blockPopstateEvent && document.readyState === 'complete';
 
             if (!onLoad && url.search('#') === -1) {
-                load(url, settings);
+                load(window.location.href, settings);
             }
         };
     }

@@ -1,7 +1,7 @@
 # ajaxpageloader
-Asynchronous page loading using Javascript History API
+Asynchronous page loading using Javascript History API and Promises
 ## Install
-`bower i ajaxloader --save`
+`bower i ajaxloader --save (coming soon)`
 
 ## Init
 ### Page loading
@@ -32,11 +32,11 @@ document.ajaxLoader({
         offset: 10,
         category: 'category'
     },
-    
-    beforeLoading: function(url, container) {
+
+    beforeLoading: function(parameters) {
         //Scripts executed before the ajax request
     },
-    afterLoading: function(url, container, data) {
+    afterLoading: function(parameters) {
         //Scripts executed after the ajax request
     }
 });
