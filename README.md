@@ -1,5 +1,5 @@
 # ajaxpageloader
-Asynchronous page loading using Javascript History API
+Asynchronous page loading using Javascript History API and Promises
 ## Install
 `bower i ajaxloader --save (coming soon)`
 
