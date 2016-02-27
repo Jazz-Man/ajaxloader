@@ -13,10 +13,10 @@ document.ajaxLoader({
     container: 'main', //where to load the new content
     siteName: 'Your Site Name',
     waitBeforeLoading: 250,
-    beforeLoading: function(url, container) {
+    beforeLoading: function(parameters) {
         //Scripts executed before the ajax request
     },
-    afterLoading: function(url, container) {
+    afterLoading: function(parameters) {
         //Scripts executed after the ajax request
     }
 });
