@@ -1,4 +1,4 @@
-<?php 
+<?php
 function is_ajax_request() {
     if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'BAWXMLHttpRequest' ){
         return true;
@@ -23,11 +23,11 @@ if(!$ajax):
 		section {
 			width: 50%;
 		}
-		
+
 		main {
 			display: flex;
 			opacity: 1;
-			transition: opacity 0.25s ease-out;
+			transition: opacity 0.5s ease-out;
 		}
 		main.loading {
 			opacity: 0;
@@ -35,14 +35,14 @@ if(!$ajax):
 	</style>
 </head>
 <body>
-<a href="http://localhost/ajaxloader/?page=<?= (isset($_GET['page']) ? $_GET['page'] + 1 : 1); ?>">go</a>
+<a href="http://localhost:3000/ajaxloader/?page=<?= (isset($_GET['page']) ? $_GET['page'] + 1 : 1); ?>">go</a>
 <button class="load">Load</button>
 <main>
 <?php endif; ?>
 
 <section>
-<h2>Page <?= $_GET['page']; ?></h2>	
-<a href="http://localhost/ajaxloader/?page=<?= (isset($_GET['page']) ? $_GET['page'] + 1 : 1); ?>"><img src="http://lorempixel.com/1920/1080/" /></a>
+<h2>Page <?= $_GET['page']; ?></h2>
+<a href="http://localhost:3000/ajaxloader/?page=<?= (isset($_GET['page']) ? $_GET['page'] + 1 : 1); ?>"><img src="http://lorempixel.com/1920/1080/" /></a>
 </section>
 
 <?php if(!$ajax): ?>
@@ -57,14 +57,14 @@ if(!$ajax):
 			    container: 'main',
 			    anchors: 'a:not([target="_blank"]):not([href="#"])',
 			    siteName: 'Your Site Name',
-			    waitBeforeLoading: 250,
-			    beforeLoading: (data) => {
+			    waitBeforeLoading: 500,
+			    beforeLoading: function(data) {
 			        data.container.classList.add('loading');
 			    },
-			    afterLoading: (data) => {
-			        data.container.classList.remove('loading');						
+			    afterLoading: function(data) {
+			        data.container.classList.remove('loading');
 			    },
-			    error: (error) => {
+			    error: function(error) {
 			        console.log(error);
 			    }
 			},
@@ -72,14 +72,14 @@ if(!$ajax):
 				wrapper: 'body',
 			    container: 'main',
 			    replaceContent: false,
-			    ajaxUrl: 'http://localhost/ajaxloader/',
+			    ajaxUrl: 'http://localhost:3000/ajaxloader/',
 			    ajaxData: {
 			        page: 1
 			    },
 				waitBeforeLoading: 0,
-			    beforeLoading: (data) => {
+			    beforeLoading: function(data) {
 			    },
-			    afterLoading: (data) => {
+			    afterLoading: function(data) {
 			    },
 			    options: ajaxOptions
 			},
@@ -87,7 +87,7 @@ if(!$ajax):
 
 		document.ajaxLoader(ajaxOptions);
 
-		button.addEventListener('click', () => {
+		button.addEventListener('click', function() {
 			document.ajaxLoader(loadOptions);
 		});
 	})();

@@ -1,6 +1,7 @@
+/*jshint esversion: 6*/
 /*eslint-env es6*/
-'use strict';
 (document => {
+    'use strict';
     const createSettings = (options) => {
         const defaults = {
             wrapper: 'html',
@@ -34,9 +35,8 @@
     };
 
     const query = (url, settings) => {
-        let xhr = new XMLHttpRequest();
-
         return new Promise ((resolve, reject) => {
+            let xhr = new XMLHttpRequest();
             if (!busy) {
                 busy = true;
 
@@ -52,7 +52,7 @@
                 xhr.send();
             }
         });
-    };   
+    };
 
     let busy = null;
 
@@ -88,7 +88,7 @@
 
                 callback(settings.afterLoading, {
                     url: url,
-                    container:container,
+                    container: container,
                     response: response
                 });
             }, settings.waitBeforeLoading);
@@ -128,11 +128,10 @@
         };
 
         window.onpopstate = (e) => {
-            let url = window.location.href,
-                onLoad = blockPopstateEvent && document.readyState === 'complete';
+            let onLoad = blockPopstateEvent && document.readyState === 'complete';
 
             if (!onLoad && url.search('#') === -1) {
-                load(url, settings);
+                load(window.location.href, settings);
             }
         };
     }
