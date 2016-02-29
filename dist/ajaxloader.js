@@ -39,28 +39,6 @@
         return obj ? url + stringify(obj) : url;
     };
 
-    var query = function query(url, settings) {
-        return new Promise(function (resolve, reject) {
-            var xhr = new XMLHttpRequest();
-            if (!busy) {
-                busy = true;
-
-                xhr.open('GET', url, true);
-                xhr.setRequestHeader('X-Requested-With', 'BAWXMLHttpRequest');
-                xhr.onload = function () {
-                    resolve(xhr.responseText);
-                    busy = null;
-                };
-                xhr.onerror = function () {
-                    reject(Error('Error:' + xhr.status));
-                };
-                xhr.send();
-            }
-        });
-    };
-
-    var busy = null;
-
     var blockPopstateEvent = document.readyState !== 'complete';
 
     function callback(fn, parameters) {
@@ -75,30 +53,38 @@
 
     function load(url, settings) {
         var container = document.querySelector(settings.container);
+        var request = new Request(url, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'BAWXMLHttpRequest'
+            }
+        });
 
         callback(settings.beforeLoading, {
             url: url,
             container: container
         });
 
-        query(url, settings).then(function (response) {
+        fetch(request).then(function (response) {
+            return response.text();
+        }).then(function (content) {
             setTimeout(function () {
                 if (settings.replaceContent) {
-                    container.innerHTML = response;
+                    container.innerHTML = content;
                     setListeners(settings);
                 } else {
-                    container.innerHTML += response;
+                    container.innerHTML += content;
                     setListeners(createSettings(settings.options));
                 }
 
                 callback(settings.afterLoading, {
                     url: url,
                     container: container,
-                    response: response
+                    response: content
                 });
             }, settings.waitBeforeLoading);
         }).catch(function (error) {
-            callback(settings.error, error);
+            return callback(settings.error, error);
         });
     }
 
