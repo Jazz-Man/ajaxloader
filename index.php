@@ -76,11 +76,6 @@ if(!$ajax):
 			    ajaxData: {
 			        page: 1
 			    },
-				waitBeforeLoading: 0,
-			    beforeLoading: function(data) {
-			    },
-			    afterLoading: function(data) {
-			    },
 			    options: ajaxOptions
 			},
 			button = document.querySelector('.load');

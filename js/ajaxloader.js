@@ -34,28 +34,6 @@
         return obj ? url + stringify(obj) : url;
     };
 
-    const query = (url, settings) => {
-        return new Promise ((resolve, reject) => {
-            let xhr = new XMLHttpRequest();
-            if (!busy) {
-                busy = true;
-
-                xhr.open('GET', url, true);
-                xhr.setRequestHeader('X-Requested-With', 'BAWXMLHttpRequest');
-                xhr.onload = () => {
-                    resolve(xhr.responseText);
-                    busy = null;
-                };
-                xhr.onerror = () => {
-                    reject(Error('Error:' + xhr.status));
-                };
-                xhr.send();
-            }
-        });
-    };
-
-    let busy = null;
-
     let blockPopstateEvent = document.readyState !== 'complete';
 
     function callback(fn, parameters) {
@@ -69,51 +47,58 @@
     }
 
     function load(url, settings) {
-        let container = document.querySelector(settings.container);
+        const container = document.querySelector(settings.container);
+        const request = new Request(url, {
+          method: 'GET',
+          headers: {
+            'X-Requested-With': 'BAWXMLHttpRequest'
+          }
+        });
 
         callback(settings.beforeLoading, {
             url: url,
             container:container
         });
 
-        query(url, settings).then(response => {
+        fetch(request)
+          .then(response => response.text())
+          .then(content => {
             setTimeout(() => {
                 if(settings.replaceContent) {
-                    container.innerHTML = response;
+                    container.innerHTML = content;
                     setListeners(settings);
                 } else {
-                    container.innerHTML += response;
+                    container.innerHTML += content;
                     setListeners(createSettings(settings.options));
                 }
 
                 callback(settings.afterLoading, {
                     url: url,
                     container: container,
-                    response: response
+                    response: content
                 });
             }, settings.waitBeforeLoading);
-        }).catch(error => {
-            callback(settings.error, error);
-        });
+          })
+          .catch(error => callback(settings.error, error));
     }
 
     function setListeners(settings) {
-        let wrapper = document.querySelector(settings.wrapper),
-            anchors = [].slice.call(wrapper.querySelectorAll(settings.anchors)),
-            listenClick = (anchor, settings) => {
-                anchor.addEventListener('click', (e) => {
-                    let url = anchor.getAttribute('href');
+        const wrapper = document.querySelector(settings.wrapper),
+              anchors = [].slice.call(wrapper.querySelectorAll(settings.anchors)),
+              listenClick = (anchor, settings) => {
+                  anchor.addEventListener('click', (e) => {
+                      const url = anchor.getAttribute('href');
 
-                    if (e.which === 2 || e.metaKey) {
-                        return true;
-                    }
-                    else if (url !== window.location.href) {
-                        window.history.pushState(null, settings.siteName, url);
-                        load(url, settings);
-                    }
-                    e.preventDefault();
-                });
-            };
+                      if (e.which === 2 || e.metaKey) {
+                          return true;
+                      }
+                      else if (url !== window.location.href) {
+                          window.history.pushState(null, settings.siteName, url);
+                          load(url, settings);
+                      }
+                      e.preventDefault();
+                  });
+              };
 
         if(anchors.length > 1) {
             anchors.forEach(anchor => listenClick(anchor, settings));
@@ -128,7 +113,7 @@
         };
 
         window.onpopstate = (e) => {
-            let onLoad = blockPopstateEvent && document.readyState === 'complete';
+            const onLoad = blockPopstateEvent && document.readyState === 'complete';
 
             if (!onLoad && url.search('#') === -1) {
                 load(window.location.href, settings);
