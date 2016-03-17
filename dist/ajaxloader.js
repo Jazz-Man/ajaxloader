@@ -51,6 +51,10 @@
 
   function load(url, settings) {
     var container = document.querySelector(settings.container);
+    var parameters = {
+      url: url,
+      container: container
+    };
     var request = new Request(url, {
       method: 'GET',
       headers: {
@@ -58,10 +62,7 @@
       }
     });
 
-    callback(settings.beforeLoading, {
-      url: url,
-      container: container
-    });
+    callback(settings.beforeLoading, parameters);
 
     setTimeout(function () {
       fetch(request).then(function (response) {
@@ -76,11 +77,7 @@
           setListeners(createSettings(settings.options));
         }
 
-        callback(settings.afterLoading, {
-          url: url,
-          container: container,
-          response: content
-        });
+        callback(settings.afterLoading, parameters);
       }).catch(function (error) {
         callback(settings.onError, error);
       });
