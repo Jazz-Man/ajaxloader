@@ -1,5 +1,5 @@
 {
-  "name": "imgwatcher",
+  "name": "ajaxloader",
   "version": "1.0.0",
   "description": "Lightweight plugin for ajax loading content",
   "main": "js/ajaxloader.js",
@@ -8,30 +8,32 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kirpalmakanga/imgwatcher.git"
+    "url": "git+https://github.com/kirpalmakanga/ajaxloader.git"
   },
   "keywords": [
     "Javascript",
-    "image",
+    "ajax",
     "loading",
     "ES6"
   ],
   "author": "Kirpal Makanga <makanga.kirpal@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kirpalmakanga/imgwatcher/issues"
+    "url": "https://github.com/kirpalmakanga/ajaxloader/issues"
   },
-  "homepage": "https://github.com/kirpalmakanga/imgwatcher#readme",
+  "homepage": "https://github.com/kirpalmakanga/ajaxloader#readme",
   "devDependencies": {
     "babel": "^6.5.2",
     "babel-preset-es2015": "^6.5.0",
     "browser-sync": "^2.11.1",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
+    "gulp-concat": "^2.6.0",
     "gulp-eslint": "^2.0.0",
     "gulp-livereload": "^3.8.1",
     "gulp-load-plugins": "^1.2.0",
     "gulp-size": "^2.0.0",
+    "gulp-strip-comments": "^2.4.2",
     "gulp-watch": "^4.3.5",
     "gulp-webserver": "^0.9.1",
     "run-sequence": "^1.1.5"
