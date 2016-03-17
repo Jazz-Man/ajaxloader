@@ -1,13 +1,14 @@
 <?php
-function is_ajax_request() {
-    if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'BAWXMLHttpRequest' ){
+function is_ajax_request()
+{
+    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'BAWXMLHttpRequest') {
         return true;
     }
 }
 
 $ajax = is_ajax_request();
 
-if(!$ajax):
+if (!$ajax):
 ?>
 <html>
 <head>
@@ -41,11 +42,13 @@ if(!$ajax):
 <?php endif; ?>
 
 <section>
-<h2>Page <?= $_GET['page']; ?></h2>
-<a href="http://localhost:3000/ajaxloader/?page=<?= (isset($_GET['page']) ? $_GET['page'] + 1 : 1); ?>"><img src="http://lorempixel.com/1920/1080/" /></a>
+  <h2>Page <?= $_GET['page']; ?></h2>
+  <a href="http://localhost:3000/ajaxloader/?page=<?= (isset($_GET['page']) ? $_GET['page'] + 1 : 1); ?>">
+    <img src="http://placehold.it/600x400/?text=<?= rand( 1 , 50 ); ?>">
+  </a>
 </section>
 
-<?php if(!$ajax): ?>
+<?php if (!$ajax): ?>
 </main>
 <script src="dist/ajaxloader.js"></script>
 <script>
@@ -58,9 +61,7 @@ if(!$ajax):
 			    anchors: 'a:not([target="_blank"]):not([href="#"])',
 			    siteName: 'Your Site Name',
 			    waitBeforeLoading: 500,
-			    beforeLoading: function(data) {
-			        data.container.classList.add('loading');
-			    },
+			    beforeLoading: 4,
 			    afterLoading: function(data) {
 			        data.container.classList.remove('loading');
 			    },

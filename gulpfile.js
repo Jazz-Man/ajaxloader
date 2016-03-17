@@ -1,3 +1,4 @@
+/*jshint esversion: 6*/
 const gulp = require('gulp');
 const gulpLoadPlugins = require('gulp-load-plugins');
 const $ = gulpLoadPlugins();
@@ -20,7 +21,7 @@ gulp.task('lint', () => {
   // Brick on failure to be super strict
   .pipe($.eslint.failOnError());
 });
- 
+
 gulp.task('babel', () => {
 	return gulp.src('js/*.js')
 		.pipe($.babel({
@@ -36,10 +37,10 @@ gulp.task('build', ['lint', 'babel'], () => {
 gulp.task('watch', ['lint', 'babel'], () => {
   browserSync.init({
     files: ['js/*.js', '*.php'],
-    proxy: 'http://127.0.0.1:5000/ajaxloader/',
+    proxy: 'http://localhost/ajaxloader/',
   });
   gulp.watch(['js/*.js', '*.php'], ['build']);
-})
+});
 
 gulp.task('default', ['clean'], () => {
   gulp.start('build');
