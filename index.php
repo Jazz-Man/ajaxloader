@@ -61,7 +61,9 @@ if (!$ajax):
 			    anchors: 'a:not([target="_blank"]):not([href="#"])',
 			    siteName: 'Your Site Name',
 			    waitBeforeLoading: 500,
-			    beforeLoading: 4,
+			    beforeLoading: function(data) {
+			        data.container.classList.add('loading');
+			    },
 			    afterLoading: function(data) {
 			        data.container.classList.remove('loading');
 			    },
