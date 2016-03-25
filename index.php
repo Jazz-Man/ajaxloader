@@ -42,7 +42,7 @@ if (!$ajax):
 <?php endif; ?>
 
 <section>
-  <h2>Page <?= $_GET['page']; ?></h2>
+  <h2>Page <?= (isset($_GET['page']) ? $_GET['page'] : 1); ?></h2>
   <a href="http://localhost:3000/ajaxloader/?page=<?= (isset($_GET['page']) ? $_GET['page'] + 1 : 1); ?>">
     <img src="http://placehold.it/600x400/?text=<?= rand( 1 , 50 ); ?>">
   </a>
@@ -77,7 +77,7 @@ if (!$ajax):
 			    replaceContent: false,
 			    ajaxUrl: 'http://localhost:3000/ajaxloader/',
 			    ajaxData: {
-			        page: 1
+			        page: 2
 			    },
 			    options: ajaxOptions
 			},

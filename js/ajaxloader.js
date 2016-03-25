@@ -2,7 +2,7 @@
 /*eslint-env es6*/
 (document => {
   'use strict';
-  const createSettings = (options) => {
+  const createSettings = options => {
     const defaults = {
       wrapper: 'html',
       ajaxUrl: null,
@@ -24,10 +24,10 @@
     return settings;
   };
 
-  const serialize = (url, obj) => {
-    const stringify = (obj) => '?' + Object.keys(obj).map(value => encodeURIComponent(value) + '=' + encodeURIComponent(obj[value])).join('&');
+  const serialize = (url, data) => {
+    const stringify = data => '?' + Object.keys(data).map(value => encodeURIComponent(value) + '=' + encodeURIComponent(data[value])).join('&');
 
-    return obj ? url + stringify(obj) : url;
+    return data ? url + stringify(data) : url;
   };
 
   let blockPopstateEvent = document.readyState !== 'complete';
@@ -38,17 +38,17 @@
     try {
       fn(params);
     } catch (error) {
-      console.error('AjaxLoader: Provided callback is not a function.');
+      console.error(error);
     }
   }
 
   function load(url, settings) {
     const container = document.querySelector(settings.container);
     const parameters = {
-      url: url,
+      url: serialize(url, settings.ajaxData),
       container: container
     };
-    const request = new Request(url, {
+    const request = new Request(serialize(url, settings.ajaxData), {
       method: 'GET',
       headers: {
         'X-Requested-With': 'BAWXMLHttpRequest'
@@ -79,22 +79,22 @@
   }
 
   function setListeners(settings) {
-    const wrapper = document.querySelector(settings.wrapper),
-      anchors = [].slice.call(wrapper.querySelectorAll(settings.anchors)),
-      listenClick = (anchor, settings) => {
-        anchor.addEventListener('click', (e) => {
-          const url = anchor.getAttribute('href');
+    const wrapper = document.querySelector(settings.wrapper);
+    const anchors = [].slice.call(wrapper.querySelectorAll(settings.anchors));
+    const listenClick = (anchor, settings) => {
+      anchor.addEventListener('click', e => {
+        const url = anchor.getAttribute('href');
 
-          if (e.which === 2 || e.metaKey) {
-            return true;
-          } else if (url !== window.location.href) {
-            window.history.pushState(null, settings.siteName, url);
+        if (e.which === 2 || e.metaKey) {
+          return true;
+        } else if (url !== window.location.href) {
+          window.history.pushState(null, settings.siteName, url);
 
-            load(url, settings);
-          }
-          e.preventDefault();
-        });
-      };
+          load(url, settings);
+        }
+        e.preventDefault();
+      });
+    };
 
     if (anchors.length > 1) {
       anchors.forEach(anchor => listenClick(anchor, settings));
@@ -108,7 +108,7 @@
       }, 0);
     };
 
-    window.onpopstate = (e) => {
+    window.onpopstate = e => {
       const onLoad = blockPopstateEvent && document.readyState === 'complete';
 
       if (!onLoad && url.search('#') === -1) {
@@ -117,13 +117,11 @@
     };
   }
 
-  document.ajaxLoader = (options) => {
+  document.ajaxLoader = options => {
     const settings = createSettings(options);
-    let url;
 
     if (settings.ajaxUrl) {
-      url = serialize(settings.ajaxUrl, settings.ajaxData);
-      load(url, settings);
+      load(settings.ajaxUrl, settings);
       return;
     }
 

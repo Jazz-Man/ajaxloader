@@ -1035,14 +1035,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     }return settings;
   };
 
-  var serialize = function serialize(url, obj) {
-    var stringify = function stringify(obj) {
-      return '?' + Object.keys(obj).map(function (value) {
-        return encodeURIComponent(value) + '=' + encodeURIComponent(obj[value]);
+  var serialize = function serialize(url, data) {
+    var stringify = function stringify(data) {
+      return '?' + Object.keys(data).map(function (value) {
+        return encodeURIComponent(value) + '=' + encodeURIComponent(data[value]);
       }).join('&');
     };
 
-    return obj ? url + stringify(obj) : url;
+    return data ? url + stringify(data) : url;
   };
 
   var blockPopstateEvent = document.readyState !== 'complete';
@@ -1053,17 +1053,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     try {
       fn(params);
     } catch (error) {
-      console.error('AjaxLoader: Provided callback is not a function.');
+      console.error(error);
     }
   }
 
   function load(url, settings) {
     var container = document.querySelector(settings.container);
     var parameters = {
-      url: url,
+      url: serialize(url, settings.ajaxData),
       container: container
     };
-    var request = new Request(url, {
+    var request = new Request(serialize(url, settings.ajaxData), {
       method: 'GET',
       headers: {
         'X-Requested-With': 'BAWXMLHttpRequest'
@@ -1093,9 +1093,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   }
 
   function setListeners(settings) {
-    var wrapper = document.querySelector(settings.wrapper),
-        anchors = [].slice.call(wrapper.querySelectorAll(settings.anchors)),
-        listenClick = function listenClick(anchor, settings) {
+    var wrapper = document.querySelector(settings.wrapper);
+    var anchors = [].slice.call(wrapper.querySelectorAll(settings.anchors));
+    var listenClick = function listenClick(anchor, settings) {
       anchor.addEventListener('click', function (e) {
         var url = anchor.getAttribute('href');
 
@@ -1135,11 +1135,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   document.ajaxLoader = function (options) {
     var settings = createSettings(options);
-    var url = void 0;
 
     if (settings.ajaxUrl) {
-      url = serialize(settings.ajaxUrl, settings.ajaxData);
-      load(url, settings);
+      load(settings.ajaxUrl, settings);
       return;
     }
 
