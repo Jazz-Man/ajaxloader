@@ -2,7 +2,7 @@
 /*eslint-env es6*/
 (document => {
   'use strict';
-  const createSettings = (options) => {
+  const createSettings = options => {
     const defaults = {
       wrapper: 'html',
       ajaxUrl: null,
@@ -24,83 +24,88 @@
     return settings;
   };
 
-  const serialize = (url, obj) => {
-    const stringify = (obj) => '?' + Object.keys(obj).map(value => encodeURIComponent(value) + '=' + encodeURIComponent(obj[value])).join('&');
+  const serialize = (url, data) => {
+    const stringify = data => '?' + Object.keys(data).map(value => encodeURIComponent(value) + '=' + encodeURIComponent(data[value])).join('&');
 
-    return obj ? url + stringify(obj) : url;
+    return data ? url + stringify(data) : url;
   };
 
   let blockPopstateEvent = document.readyState !== 'complete';
 
-  function callback(fn, params) {
+  function callback(fn, parameters, after) {
+    let prom = null;
+
+    if (fn === null && after) after();
+
     if (fn === null) return;
 
     try {
-      fn(params);
+      prom = fn(parameters);
     } catch (error) {
-      console.error('AjaxLoader: Provided callback is not a function.');
+      console.error(error);
+    } finally {
+      if (prom && typeof prom.then === 'function') {
+        prom
+          .then(() => after())
+          .catch(error => console.error(error));
+      } else if (after) {
+        after();
+      }
     }
   }
 
   function load(url, settings) {
+    const serialized = serialize(url, settings.ajaxData);
     const container = document.querySelector(settings.container);
-    const parameters = {
-      url: url,
-      container: container
-    };
-    const request = new Request(url, {
+    const request = new Request(serialized, {
       method: 'GET',
       headers: {
         'X-Requested-With': 'BAWXMLHttpRequest'
       }
     });
 
-    callback(settings.beforeLoading, parameters);
+    callback(settings.beforeLoading, container, () => {
+      setTimeout(() => {
+        fetch(request)
+          .then(response => response.text())
+          .then(content => {
 
-    setTimeout(() => {
-      fetch(request)
-        .then(response => response.text())
-        .then(content => {
+            if (settings.replaceContent) {
+              container.innerHTML = content;
+              setListeners(settings);
+            } else {
+              container.innerHTML += content;
+              setListeners(createSettings(settings.options));
+            }
 
-          if (settings.replaceContent) {
-            container.innerHTML = content;
-            setListeners(settings);
-          } else {
-            container.innerHTML += content;
-            setListeners(createSettings(settings.options));
-          }
-
-          callback(settings.afterLoading, parameters);
-        })
-        .catch(error => {
-          callback(settings.onError, error);
-        });
-    }, settings.waitBeforeLoading);
+            callback(settings.afterLoading, container);
+          })
+          .catch(error => callback(settings.onError, {
+            container: container,
+            error: error
+          }));
+      }, settings.waitBeforeLoading);
+    });
   }
 
   function setListeners(settings) {
-    const wrapper = document.querySelector(settings.wrapper),
-      anchors = [].slice.call(wrapper.querySelectorAll(settings.anchors)),
-      listenClick = (anchor, settings) => {
-        anchor.addEventListener('click', (e) => {
-          const url = anchor.getAttribute('href');
+    const wrapper = document.querySelector(settings.wrapper);
+    const anchors = [].slice.call(wrapper.querySelectorAll(settings.anchors));
 
-          if (e.which === 2 || e.metaKey) {
-            return true;
-          } else if (url !== window.location.href) {
-            window.history.pushState(null, settings.siteName, url);
+    anchors.map(anchor => {
+      anchor.addEventListener('click', e => {
+        const url = anchor.getAttribute('href');
 
-            load(url, settings);
-          }
-          e.preventDefault();
-        });
-      };
+        if (e.which === 2 || e.metaKey) {
+          return true;
+        } else if (url !== window.location.href) {
+          window.history.pushState(null, settings.siteName, url);
 
-    if (anchors.length > 1) {
-      anchors.forEach(anchor => listenClick(anchor, settings));
-    } else {
-      listenClick(anchors[0], settings);
-    }
+          load(url, settings);
+        }
+        e.preventDefault();
+      });
+    });
 
     window.onload = () => {
       setTimeout(() => {
@@ -108,7 +113,7 @@
       }, 0);
     };
 
-    window.onpopstate = (e) => {
+    window.onpopstate = e => {
       const onLoad = blockPopstateEvent && document.readyState === 'complete';
 
       if (!onLoad && url.search('#') === -1) {
@@ -117,20 +122,18 @@
     };
   }
 
-  document.ajaxLoader = (options) => {
+  document.ajaxLoader = options => {
     const settings = createSettings(options);
-    let url;
 
     if (settings.ajaxUrl) {
-      url = serialize(settings.ajaxUrl, settings.ajaxData);
-      load(url, settings);
+      load(settings.ajaxUrl, settings);
       return;
     }
 
     if (window.history && window.history.pushState) {
       setListeners(settings);
     } else {
-      console.error('History is not supported by this browser.');
+      console.error('AjaxLoader: History is not supported by this browser.');
     }
   };
 

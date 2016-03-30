@@ -42,8 +42,8 @@ if (!$ajax):
 <?php endif; ?>
 
 <section>
-  <h2>Page <?= $_GET['page']; ?></h2>
-  <a href="http://localhost/ajaxloader/?page=<?= (isset($_GET['page']) ? $_GET['page'] + 1 : 1); ?>">
+  <h2>Page <?= (isset($_GET['page']) ? $_GET['page'] : 1); ?></h2>
+  <a href="http://localhost:3000/ajaxloader/?page=<?= (isset($_GET['page']) ? $_GET['page'] + 1 : 1); ?>">
     <img src="http://placehold.it/600x400/?text=<?= rand( 1 , 50 ); ?>">
   </a>
 </section>
@@ -61,14 +61,14 @@ if (!$ajax):
 			    anchors: 'a:not([target="_blank"]):not([href="#"])',
 			    siteName: 'Your Site Name',
 			    waitBeforeLoading: 500,
-			    beforeLoading: function(data) {
-			        data.container.classList.add('loading');
+			    beforeLoading: function(container) {
+			        container.classList.add('loading');
 			    },
-			    afterLoading: function(data) {
-			        data.container.classList.remove('loading');
+			    afterLoading: function(container) {
+			        container.classList.remove('loading');
 			    },
-			    error: function(error) {
-			        console.log(error);
+			    error: function(data) {
+			        console.log(data.error);
 			    }
 			},
 			loadOptions = {
@@ -77,7 +77,7 @@ if (!$ajax):
 			    replaceContent: false,
 			    ajaxUrl: 'http://localhost/ajaxloader/',
 			    ajaxData: {
-			        page: 1
+			        page: 2
 			    },
 			    options: ajaxOptions
 			},

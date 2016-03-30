@@ -1035,67 +1035,82 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     }return settings;
   };
 
-  var serialize = function serialize(url, obj) {
-    var stringify = function stringify(obj) {
-      return '?' + Object.keys(obj).map(function (value) {
-        return encodeURIComponent(value) + '=' + encodeURIComponent(obj[value]);
+  var serialize = function serialize(url, data) {
+    var stringify = function stringify(data) {
+      return '?' + Object.keys(data).map(function (value) {
+        return encodeURIComponent(value) + '=' + encodeURIComponent(data[value]);
       }).join('&');
     };
 
-    return obj ? url + stringify(obj) : url;
+    return data ? url + stringify(data) : url;
   };
 
   var blockPopstateEvent = document.readyState !== 'complete';
 
-  function callback(fn, params) {
+  function callback(fn, parameters, after) {
+    var prom = null;
+
+    if (fn === null && after) after();
+
     if (fn === null) return;
 
     try {
-      fn(params);
+      prom = fn(parameters);
     } catch (error) {
-      console.error('AjaxLoader: Provided callback is not a function.');
+      console.error(error);
+    } finally {
+      if (prom && typeof prom.then === 'function') {
+        prom.then(function () {
+          return after();
+        }).catch(function (error) {
+          return console.error(error);
+        });
+      } else if (after) {
+        after();
+      }
     }
   }
 
   function load(url, settings) {
+    var serialized = serialize(url, settings.ajaxData);
     var container = document.querySelector(settings.container);
-    var parameters = {
-      url: url,
-      container: container
-    };
-    var request = new Request(url, {
+    var request = new Request(serialized, {
       method: 'GET',
       headers: {
         'X-Requested-With': 'BAWXMLHttpRequest'
       }
     });
 
-    callback(settings.beforeLoading, parameters);
+    callback(settings.beforeLoading, container, function () {
+      setTimeout(function () {
+        fetch(request).then(function (response) {
+          return response.text();
+        }).then(function (content) {
 
-    setTimeout(function () {
-      fetch(request).then(function (response) {
-        return response.text();
-      }).then(function (content) {
+          if (settings.replaceContent) {
+            container.innerHTML = content;
+            setListeners(settings);
+          } else {
+            container.innerHTML += content;
+            setListeners(createSettings(settings.options));
+          }
 
-        if (settings.replaceContent) {
-          container.innerHTML = content;
-          setListeners(settings);
-        } else {
-          container.innerHTML += content;
-          setListeners(createSettings(settings.options));
-        }
-
-        callback(settings.afterLoading, parameters);
-      }).catch(function (error) {
-        callback(settings.onError, error);
-      });
-    }, settings.waitBeforeLoading);
+          callback(settings.afterLoading, container);
+        }).catch(function (error) {
+          return callback(settings.onError, {
+            container: container,
+            error: error
+          });
+        });
+      }, settings.waitBeforeLoading);
+    });
   }
 
   function setListeners(settings) {
-    var wrapper = document.querySelector(settings.wrapper),
-        anchors = [].slice.call(wrapper.querySelectorAll(settings.anchors)),
-        listenClick = function listenClick(anchor, settings) {
+    var wrapper = document.querySelector(settings.wrapper);
+    var anchors = [].slice.call(wrapper.querySelectorAll(settings.anchors));
+
+    anchors.map(function (anchor) {
       anchor.addEventListener('click', function (e) {
         var url = anchor.getAttribute('href');
 
@@ -1108,15 +1123,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
         e.preventDefault();
       });
-    };
-
-    if (anchors.length > 1) {
-      anchors.forEach(function (anchor) {
-        return listenClick(anchor, settings);
-      });
-    } else {
-      listenClick(anchors[0], settings);
-    }
+    });
 
     window.onload = function () {
       setTimeout(function () {
@@ -1135,18 +1142,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   document.ajaxLoader = function (options) {
     var settings = createSettings(options);
-    var url = void 0;
 
     if (settings.ajaxUrl) {
-      url = serialize(settings.ajaxUrl, settings.ajaxData);
-      load(url, settings);
+      load(settings.ajaxUrl, settings);
       return;
     }
 
     if (window.history && window.history.pushState) {
       setListeners(settings);
     } else {
-      console.error('History is not supported by this browser.');
+      console.error('AjaxLoader: History is not supported by this browser.');
     }
   };
 })(document);
