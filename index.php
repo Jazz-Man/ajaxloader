@@ -36,14 +36,14 @@ if (!$ajax):
 	</style>
 </head>
 <body>
-<a href="http://localhost:3000/ajaxloader/?page=<?= (isset($_GET['page']) ? $_GET['page'] + 1 : 1); ?>">go</a>
+<a href="http://localhost/ajaxloader/?page=<?= (isset($_GET['page']) ? $_GET['page'] + 1 : 1); ?>">go</a>
 <button class="load">Load</button>
 <main>
 <?php endif; ?>
 
 <section>
   <h2>Page <?= $_GET['page']; ?></h2>
-  <a href="http://localhost:3000/ajaxloader/?page=<?= (isset($_GET['page']) ? $_GET['page'] + 1 : 1); ?>">
+  <a href="http://localhost/ajaxloader/?page=<?= (isset($_GET['page']) ? $_GET['page'] + 1 : 1); ?>">
     <img src="http://placehold.it/600x400/?text=<?= rand( 1 , 50 ); ?>">
   </a>
 </section>
@@ -75,7 +75,7 @@ if (!$ajax):
 				wrapper: 'body',
 			    container: 'main',
 			    replaceContent: false,
-			    ajaxUrl: 'http://localhost:3000/ajaxloader/',
+			    ajaxUrl: 'http://localhost/ajaxloader/',
 			    ajaxData: {
 			        page: 1
 			    },
