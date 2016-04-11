@@ -1132,10 +1132,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     };
 
     window.onpopstate = function (e) {
+      var url = window.location.href;
       var onLoad = blockPopstateEvent && document.readyState === 'complete';
 
       if (!onLoad && url.search('#') === -1) {
-        load(window.location.href, settings);
+        load(url, settings);
       }
     };
   }
