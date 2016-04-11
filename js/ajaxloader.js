@@ -114,10 +114,11 @@
     };
 
     window.onpopstate = e => {
+      const url =  window.location.href;
       const onLoad = blockPopstateEvent && document.readyState === 'complete';
-
+      
       if (!onLoad && url.search('#') === -1) {
-        load(window.location.href, settings);
+        load(url, settings);
       }
     };
   }
