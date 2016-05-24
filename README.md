@@ -32,7 +32,6 @@ document.ajaxLoader({
         offset: 10,
         category: 'category'
     },
-    replaceContent: true,
     beforeLoading: function(parameters) {
         //Scripts executed before the ajax request
     },
