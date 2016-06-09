@@ -9,7 +9,7 @@ const strip = require('gulp-strip-comments');
 gulp.task('clean', require('del').bind(null, ['dist']));
 
 gulp.task('concat', () => {
-  return gulp.src(['bower_components/es6-promise/es6-promise.js', 'bower_components/fetch/fetch.js', './lib/*.js'])
+  return gulp.src('./lib/*.js')
 
   .pipe(gulp.dest('./dist/'));
 });

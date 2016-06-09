@@ -45,8 +45,6 @@ document.ajaxLoader({
 ### Checking request with PHP (example)
 ``` php
 function is_ajax_request() {
-    if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'BAWXMLHttpRequest' ){
-        return true;
-    }
+    return isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'BAWXMLHttpRequest';
 }
 ```

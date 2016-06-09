@@ -497,7 +497,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       lib$es6$promise$$internal$$makePromise(this.promise);
     }
 
-    if (Array.isArray(input)) {
+    if (lib$es6$promise$utils$$isArray(input)) {
       this._input = input;
       this.length = input.length;
       this._remaining = input.length;
@@ -890,7 +890,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   function headers(xhr) {
     var head = new Headers();
-    var pairs = xhr.getAllResponseHeaders().trim().split('\n');
+    var pairs = (xhr.getAllResponseHeaders() || '').trim().split('\n');
     pairs.forEach(function (header) {
       var split = header.trim().split(':');
       var key = split.shift().trim();
@@ -990,6 +990,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         reject(new TypeError('Network request failed'));
       };
 
+      xhr.ontimeout = function () {
+        reject(new TypeError('Network request failed'));
+      };
+
       xhr.open(request.method, request.url, true);
 
       if (request.credentials === 'include') {
@@ -1014,7 +1018,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   'use strict';
 
   var createSettings = function createSettings(options) {
-    var defaults = {
+    var settings = {
       wrapper: 'html',
       ajaxUrl: null,
       ajaxData: null,
@@ -1027,8 +1031,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       onError: null,
       options: null
     };
-
-    var settings = defaults;
 
     for (var option in options) {
       settings[option] = options[option];

@@ -3,7 +3,7 @@
 (document => {
   'use strict';
   const createSettings = options => {
-    const defaults = {
+    let settings = {
       wrapper: 'html',
       ajaxUrl: null,
       ajaxData: null,
@@ -16,8 +16,6 @@
       onError: null,
       options: null
     };
-
-    let settings = defaults;
 
     for (let option in options) settings[option] = options[option];
 
