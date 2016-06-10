@@ -25,6 +25,7 @@ document.ajaxLoader({
 Fetches new content and appends to current one
 ``` js
 document.ajaxLoader({
+    cors: true,
     container: 'main', //where to load the new content
     ajaxUrl: 'http://your-ajax-url.com',
     ajaxData: { //All the data to send to the server
@@ -45,6 +46,6 @@ document.ajaxLoader({
 ### Checking request with PHP (example)
 ``` php
 function is_ajax_request() {
-    return isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'BAWXMLHttpRequest';
+    return isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'BAWXMLHttpRequest';
 }
 ```

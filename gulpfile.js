@@ -8,12 +8,6 @@ const strip = require('gulp-strip-comments');
 
 gulp.task('clean', require('del').bind(null, ['dist']));
 
-gulp.task('concat', () => {
-  return gulp.src('./lib/*.js')
-
-  .pipe(gulp.dest('./dist/'));
-});
-
 gulp.task('lint', () => {
   return gulp.src('js/*').pipe($.eslint({
       'parserOptions': {
@@ -30,11 +24,7 @@ gulp.task('lint', () => {
 });
 
 gulp.task('babel', () => {
-  return gulp.src([
-      'bower_components/es6-promise/es6-promise.js',
-      'bower_components/fetch/fetch.js',
-      'js/ajaxloader.js'
-    ])
+  return gulp.src('js/ajaxloader.js')
     .pipe($.concat('ajaxloader.js'))
     .pipe(strip())
     .pipe($.babel({

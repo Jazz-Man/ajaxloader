@@ -4,7 +4,7 @@
   'use strict';
   const createSettings = options => {
     let settings = {
-      cors: false,
+      cors: true,
       wrapper: 'html',
       ajaxUrl: null,
       ajaxData: null,
