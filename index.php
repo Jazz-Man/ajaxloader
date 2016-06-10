@@ -5,8 +5,6 @@ function is_ajax_request() {
 
 $ajax = is_ajax_request();
 
-echo 'ajax request: '.$_SERVER['HTTP_X_REQUESTED_WITH'];
-
 if (!$ajax):
 ?>
 <html>
