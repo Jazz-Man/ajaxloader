@@ -13,10 +13,10 @@ document.ajaxLoader({
     container: 'main', //where to load the new content
     siteName: 'Your Site Name',
     waitBeforeLoading: 250,
-    beforeLoading: function(parameters) {
+    beforeLoading: function(container) {
         //Scripts executed before the ajax request
     },
-    afterLoading: function(parameters) {
+    afterLoading: function(container) {
         //Scripts executed after the ajax request
     }
 });
@@ -25,6 +25,7 @@ document.ajaxLoader({
 Fetches new content and appends to current one
 ``` js
 document.ajaxLoader({
+    cors: true,
     container: 'main', //where to load the new content
     ajaxUrl: 'http://your-ajax-url.com',
     ajaxData: { //All the data to send to the server
@@ -32,10 +33,10 @@ document.ajaxLoader({
         offset: 10,
         category: 'category'
     },
-    beforeLoading: function(parameters) {
+    beforeLoading: function(container) {
         //Scripts executed before the ajax request
     },
-    afterLoading: function(parameters) {
+    afterLoading: function(container) {
         //Scripts executed after the ajax request
     }
 });
@@ -44,8 +45,6 @@ document.ajaxLoader({
 ### Checking request with PHP (example)
 ``` php
 function is_ajax_request() {
-    if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'BAWXMLHttpRequest' ){
-        return true;
-    }
+    return isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'BAWXMLHttpRequest';
 }
 ```

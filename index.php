@@ -1,9 +1,6 @@
 <?php
-function is_ajax_request()
-{
-    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'BAWXMLHttpRequest') {
-        return true;
-    }
+function is_ajax_request() {
+    return (isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'BAWXMLHttpRequest');
 }
 
 $ajax = is_ajax_request();

@@ -3,7 +3,8 @@
 (document => {
   'use strict';
   const createSettings = options => {
-    const defaults = {
+    let settings = {
+      cors: true,
       wrapper: 'html',
       ajaxUrl: null,
       ajaxData: null,
@@ -16,8 +17,6 @@
       onError: null,
       options: null
     };
-
-    let settings = defaults;
 
     for (let option in options) settings[option] = options[option];
 
@@ -61,7 +60,8 @@
       method: 'GET',
       headers: {
         'X-Requested-With': 'BAWXMLHttpRequest'
-      }
+      },
+      mode: settings.cors ? 'cors' : 'no-cors'
     });
 
     callback(settings.beforeLoading, container, () => {
