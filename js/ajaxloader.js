@@ -4,6 +4,7 @@
   'use strict';
   const createSettings = options => {
     let settings = {
+      cors: false,
       wrapper: 'html',
       ajaxUrl: null,
       ajaxData: null,
@@ -59,7 +60,8 @@
       method: 'GET',
       headers: {
         'X-Requested-With': 'BAWXMLHttpRequest'
-      }
+      },
+      mode: settings.cors ? 'cors' : 'no-cors'
     });
 
     callback(settings.beforeLoading, container, () => {

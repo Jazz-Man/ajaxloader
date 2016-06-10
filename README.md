@@ -13,10 +13,10 @@ document.ajaxLoader({
     container: 'main', //where to load the new content
     siteName: 'Your Site Name',
     waitBeforeLoading: 250,
-    beforeLoading: function(parameters) {
+    beforeLoading: function(container) {
         //Scripts executed before the ajax request
     },
-    afterLoading: function(parameters) {
+    afterLoading: function(container) {
         //Scripts executed after the ajax request
     }
 });
@@ -33,10 +33,10 @@ document.ajaxLoader({
         category: 'category'
     },
 
-    beforeLoading: function(parameters) {
+    beforeLoading: function(container) {
         //Scripts executed before the ajax request
     },
-    afterLoading: function(parameters) {
+    afterLoading: function(container) {
         //Scripts executed after the ajax request
     }
 });

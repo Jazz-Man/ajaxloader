@@ -1019,6 +1019,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   var createSettings = function createSettings(options) {
     var settings = {
+      cors: false,
       wrapper: 'html',
       ajaxUrl: null,
       ajaxData: null,
@@ -1080,7 +1081,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       method: 'GET',
       headers: {
         'X-Requested-With': 'BAWXMLHttpRequest'
-      }
+      },
+      mode: settings.cors ? 'cors' : 'no-cors'
     });
 
     callback(settings.beforeLoading, container, function () {
